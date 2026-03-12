@@ -290,6 +290,7 @@
   <a href="#arithmetique">Arithmétique</a>
   <a href="#lzw">LZW/RLE</a>
   <a href="#quiz">Quiz 🎯</a>
+  <a href="#exercices">Exercices 📝</a>
 </nav>
 
 <!-- HERO -->
@@ -1100,6 +1101,391 @@ V = valence du code (binaire V=2)
 
   </div>
 </div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 11: EXERCICES TYPE EXAMEN -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="exercices">
+  <div class="section-header">
+    <div class="section-num num-yellow">📝</div>
+    <div>
+      <div class="section-title">Exercices Type Examen</div>
+      <div class="section-sub">Problèmes complets avec solutions détaillées</div>
+    </div>
+  </div>
+
+  <div class="info-box blue" style="margin-bottom:1.5rem">
+    💡 Chaque exercice est construit comme un vrai sujet d'examen. <strong>Essaie de le résoudre seul</strong> avant de cliquer sur "Voir la solution".
+  </div>
+
+  <!-- ─── EX 1 : ENTROPIE + HUFFMAN ─── -->
+  <div class="card" style="margin-bottom:1.25rem; border-color:rgba(79,142,247,0.3)">
+    <div class="card-title" style="color:var(--accent); font-size:0.95rem">📘 Exercice 1 — Entropie & Codage de Huffman</div>
+    <div class="info-box yellow" style="margin-bottom:1rem; font-size:0.85rem">
+      Soit une source S à 6 symboles avec les probabilités suivantes :<br>
+      <code style="color:var(--code)">s₁=0.30, s₂=0.25, s₃=0.20, s₄=0.12, s₅=0.08, s₆=0.05</code>
+      <ol style="margin-top:0.75rem; padding-left:1.2rem; line-height:2; font-size:0.83rem">
+        <li>Calculer l'entropie H(S) de la source.</li>
+        <li>Construire le code de Huffman binaire et donner les mots de code.</li>
+        <li>Calculer la longueur moyenne |φ| et l'efficacité E du code obtenu.</li>
+        <li>Vérifier l'inégalité de Kraft.</li>
+      </ol>
+    </div>
+    <details>
+      <summary>📗 Voir la solution complète</summary>
+      <div class="details-body">
+
+        <div style="font-size:0.83rem; font-weight:700; color:var(--accent); margin-bottom:0.5rem">1. Calcul de l'entropie H(S)</div>
+        <div class="formula-box" style="font-size:0.8rem">H(S) = -Σ pᵢ·log₂(pᵢ)
+     = -0.30·log₂(0.30) - 0.25·log₂(0.25) - 0.20·log₂(0.20)
+       - 0.12·log₂(0.12) - 0.08·log₂(0.08) - 0.05·log₂(0.05)
+
+     = 0.30×1.737 + 0.25×2.000 + 0.20×2.322
+       + 0.12×3.059 + 0.08×3.644 + 0.05×4.322
+
+     = 0.521 + 0.500 + 0.464 + 0.367 + 0.292 + 0.216
+
+H(S) ≈ 2.360 bits/symbole
+
+Borne max : log₂(6) ≈ 2.585 bits → source non équiprobable</div>
+
+        <div style="font-size:0.83rem; font-weight:700; color:var(--accent3); margin:0.75rem 0 0.5rem">2. Construction de l'arbre de Huffman</div>
+        <table class="kv-table" style="font-size:0.79rem">
+          <thead><tr><th>Étape</th><th>Action</th><th>Résultat</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Fusionner s₅(0.08) + s₆(0.05)</td><td>N₁ = 0.13</td></tr>
+            <tr><td>2</td><td>Fusionner N₁(0.13) + s₄(0.12)</td><td>N₂ = 0.25</td></tr>
+            <tr><td>3</td><td>Fusionner s₃(0.20) + N₂(0.25)</td><td>N₃ = 0.45</td></tr>
+            <tr><td>4</td><td>Fusionner s₂(0.25) + s₁(0.30)</td><td>N₄ = 0.55</td></tr>
+            <tr><td>5</td><td>Fusionner N₃(0.45) + N₄(0.55)</td><td>Racine = 1.00</td></tr>
+          </tbody>
+        </table>
+        <div class="formula-box" style="font-size:0.79rem; margin-top:0.5rem">Mots de code (branche gauche=0, droite=1) :
+s₁ = 0.30  →  10
+s₂ = 0.25  →  11
+s₃ = 0.20  →  00
+s₄ = 0.12  →  011
+s₅ = 0.08  →  0100
+s₆ = 0.05  →  0101</div>
+
+        <div style="font-size:0.83rem; font-weight:700; color:var(--accent4); margin:0.75rem 0 0.5rem">3. Longueur moyenne et efficacité</div>
+        <div class="formula-box" style="font-size:0.8rem">|φ| = 0.30×2 + 0.25×2 + 0.20×2 + 0.12×3 + 0.08×4 + 0.05×4
+    = 0.60 + 0.50 + 0.40 + 0.36 + 0.32 + 0.20
+    = 2.38 bits/symbole
+
+Efficacité : E = H(S) / |φ| = 2.360 / 2.38 ≈ 0.992  ✓ (très bon !)</div>
+
+        <div style="font-size:0.83rem; font-weight:700; color:var(--accent2); margin:0.75rem 0 0.5rem">4. Vérification de Kraft</div>
+        <div class="formula-box" style="font-size:0.8rem">Σ 2^(-nᵢ) = 2×2⁻² + 1×2⁻³ + 2×2⁻⁴
+           = 2×0.25 + 0.125 + 2×0.0625
+           = 0.50 + 0.125 + 0.125 + 0.0625 + 0.0625
+           ... (détail par symbole)
+= 2⁻² + 2⁻² + 2⁻² + 2⁻³ + 2⁻⁴ + 2⁻⁴
+= 0.25 + 0.25 + 0.25 + 0.125 + 0.0625 + 0.0625 = 1.0 ≤ 1  ✓</div>
+        <div class="info-box green" style="font-size:0.8rem; margin-top:0.5rem">Kraft = 1 → code complet, aucun bit gaspillé ✓</div>
+      </div>
+    </details>
+  </div>
+
+  <!-- ─── EX 2 : CODAGE ARITHMÉTIQUE ─── -->
+  <div class="card" style="margin-bottom:1.25rem; border-color:rgba(240,165,0,0.3)">
+    <div class="card-title" style="color:var(--accent4); font-size:0.95rem">📙 Exercice 2 — Codage Arithmétique Statique</div>
+    <div class="info-box yellow" style="margin-bottom:1rem; font-size:0.85rem">
+      Source S = {a, b, c} avec P(a) = 0.5, P(b) = 0.3, P(c) = 0.2.<br>
+      On ordonne les intervalles : a → [0, 0.5[, b → [0.5, 0.8[, c → [0.8, 1[
+      <ol style="margin-top:0.75rem; padding-left:1.2rem; line-height:2; font-size:0.83rem">
+        <li>Coder la chaîne <strong>"bac"</strong> par codage arithmétique statique.</li>
+        <li>Donner l'intervalle final et choisir le code décimal.</li>
+        <li>Décoder le nombre <strong>0.65</strong> (3 symboles) avec le même alphabet.</li>
+      </ol>
+    </div>
+    <details>
+      <summary>📗 Voir la solution complète</summary>
+      <div class="details-body">
+
+        <div style="font-size:0.83rem; font-weight:700; color:var(--accent4); margin-bottom:0.5rem">1 & 2. Codage de "bac"</div>
+        <div class="formula-box" style="font-size:0.8rem">Rappel : Lₖ = Lₖ₋₁ + Wₖ₋₁ × borne_inf(symbole)
+          Wₖ = Wₖ₋₁ × P(symbole)
+
+Itération 0 (initial) : L = 0.0,  W = 1.0
+
+Itération 1 → symbole 'b' : intervalle de b = [0.5, 0.8[
+  L₁ = 0.0 + 1.0 × 0.5  = 0.5
+  W₁ = 1.0 × 0.3         = 0.3
+  Intervalle courant : [0.5, 0.8[
+
+Itération 2 → symbole 'a' : intervalle de a = [0.0, 0.5[
+  L₂ = 0.5 + 0.3 × 0.0  = 0.5
+  W₂ = 0.3 × 0.5         = 0.15
+  Intervalle courant : [0.5, 0.65[
+
+Itération 3 → symbole 'c' : intervalle de c = [0.8, 1.0[
+  L₃ = 0.5 + 0.15 × 0.8 = 0.5 + 0.12 = 0.62
+  W₃ = 0.15 × 0.2        = 0.03
+  Intervalle final : [0.62, 0.65[
+
+→ Code = tout réel ∈ [0.62, 0.65[
+→ On choisit 0.63 (ou 0.62, 0.64…)</div>
+
+        <div style="font-size:0.83rem; font-weight:700; color:var(--accent4); margin:0.75rem 0 0.5rem">3. Décodage de 0.65</div>
+        <div class="formula-box" style="font-size:0.8rem">Code reçu : x = 0.65
+
+Étape 1 : 0.65 ∈ [0.5, 0.8[ → symbole 'b'
+  Soustraire borne_inf(b) = 0.5  → 0.65 - 0.5 = 0.15
+  Diviser par P(b) = 0.3         → 0.15 / 0.3 = 0.5
+
+Étape 2 : 0.5 ∈ [0.5, 0.8[ → symbole 'b'
+  0.5 - 0.5 = 0.0  →  0.0 / 0.3 = 0.0
+
+Étape 3 : 0.0 ∈ [0.0, 0.5[ → symbole 'a'
+  0.0 - 0.0 = 0.0  →  0.0 / 0.5 = 0.0  (stop après 3 symboles)
+
+→ Chaîne décodée : "bba"</div>
+      </div>
+    </details>
+  </div>
+
+  <!-- ─── EX 3 : SHANNON-FANO ─── -->
+  <div class="card" style="margin-bottom:1.25rem; border-color:rgba(63,207,142,0.3)">
+    <div class="card-title" style="color:var(--accent3); font-size:0.95rem">📗 Exercice 3 — Shannon-Fano & Comparaison</div>
+    <div class="info-box green" style="margin-bottom:1rem; font-size:0.85rem">
+      Source S = {A, B, C, D, E} avec P(A)=0.4, P(B)=0.2, P(C)=0.2, P(D)=0.1, P(E)=0.1
+      <ol style="margin-top:0.75rem; padding-left:1.2rem; line-height:2; font-size:0.83rem">
+        <li>Construire le code Shannon-Fano.</li>
+        <li>Construire le code Huffman.</li>
+        <li>Comparer les longueurs moyennes et les efficacités.</li>
+        <li>Calculer H(S) et conclure sur l'optimalité.</li>
+      </ol>
+    </div>
+    <details>
+      <summary>📗 Voir la solution complète</summary>
+      <div class="details-body">
+
+        <div style="font-size:0.83rem; font-weight:700; color:var(--accent3); margin-bottom:0.5rem">4. Entropie H(S)</div>
+        <div class="formula-box" style="font-size:0.8rem">H(S) = -2×[0.4·log₂(0.4)] - 2×[0.2·log₂(0.2)] - 2×[0.1·log₂(0.1)]
+     = 0.4×1.322 + 2×(0.2×2.322) + 2×(0.1×3.322)
+     = 0.529 + 0.929 + 0.664
+H(S) ≈ 2.122 bits/symbole</div>
+
+        <div style="font-size:0.83rem; font-weight:700; color:var(--accent); margin:0.75rem 0 0.5rem">1. Shannon-Fano</div>
+        <div class="formula-box" style="font-size:0.8rem">Tri décroissant : A(0.4) B(0.2) C(0.2) D(0.1) E(0.1)
+Total = 1.0
+
+Division 1 : G₀={A, B} (0.6)  vs  G₁={C, D, E} (0.4)
+  G₀ → bit 0 :  A(0.4) | B(0.2)
+    Sous-division : G₀₀={A} (0.4) | G₀₁={B} (0.2)
+    → A = 00,  B = 01
+  G₁ → bit 1 :  C(0.2) | D(0.1) | E(0.1)
+    Sous-division : G₁₀={C} (0.2) | G₁₁={D, E} (0.2)
+    → C = 10
+    G₁₁={D, E} : G₁₁₀={D} | G₁₁₁={E}
+    → D = 110,  E = 111
+
+Codes Shannon-Fano : A=00, B=01, C=10, D=110, E=111</div>
+
+        <div style="font-size:0.83rem; font-weight:700; color:var(--accent3); margin:0.75rem 0 0.5rem">2. Huffman</div>
+        <div class="formula-box" style="font-size:0.8rem">Tri : A(0.4) B(0.2) C(0.2) D(0.1) E(0.1)
+
+Étape 1 : D(0.1) + E(0.1) → N₁(0.2)
+  File : A(0.4) B(0.2) C(0.2) N₁(0.2)
+
+Étape 2 : B(0.2) + C(0.2) → N₂(0.4)  [ou C + N₁]
+  File : A(0.4) N₂(0.4) N₁(0.2)
+
+Étape 3 : N₁(0.2) + N₂(0.4) → N₃(0.6)
+  File : A(0.4) N₃(0.6)
+
+Étape 4 : A(0.4) + N₃(0.6) → Racine(1.0)
+
+Codes Huffman : A=0, B=110, C=111, D=100, E=101
+  (ou variante : A=0, B=10, C=110, D=1110, E=1111 selon arbre)</div>
+
+        <div style="font-size:0.83rem; font-weight:700; color:var(--accent4); margin:0.75rem 0 0.5rem">3. Comparaison</div>
+        <table class="kv-table" style="font-size:0.79rem">
+          <thead><tr><th>Code</th><th>A(0.4)</th><th>B(0.2)</th><th>C(0.2)</th><th>D(0.1)</th><th>E(0.1)</th><th>|φ|</th><th>E</th></tr></thead>
+          <tbody>
+            <tr><td><strong style="color:var(--accent)">Shannon-Fano</strong></td><td>00 (2)</td><td>01 (2)</td><td>10 (2)</td><td>110 (3)</td><td>111 (3)</td>
+              <td><code style="color:var(--formula)">2.2</code></td><td>0.965</td></tr>
+            <tr><td><strong style="color:var(--accent3)">Huffman</strong></td><td>0 (1)</td><td>110 (3)</td><td>111 (3)</td><td>100 (3)</td><td>101 (3)</td>
+              <td><code style="color:var(--formula)">2.2</code></td><td>0.965</td></tr>
+          </tbody>
+        </table>
+        <div class="info-box green" style="margin-top:0.5rem; font-size:0.8rem">
+          <strong>Conclusion :</strong> Les deux codes donnent ici |φ| = 2.2 bits/symbole, soit la même efficacité (0.965). Huffman garantit toujours la longueur moyenne minimale. Les deux sont quasi-optimaux par rapport à H(S)=2.122.
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- ─── EX 4 : CANAL + CAPACITY ─── -->
+  <div class="card" style="margin-bottom:1.25rem; border-color:rgba(224,92,92,0.3)">
+    <div class="card-title" style="color:var(--accent2); font-size:0.95rem">📕 Exercice 4 — Canal Binaire Symétrique & Théorème de Shannon</div>
+    <div class="info-box red" style="margin-bottom:1rem; font-size:0.85rem">
+      Un CBS a une probabilité d'erreur p = 0.1. La source émet 1200 symboles/seconde avec H(S) = 0.8 bits/symbole.
+      <ol style="margin-top:0.75rem; padding-left:1.2rem; line-height:2; font-size:0.83rem">
+        <li>Calculer la capacité C du canal (en bits par usage).</li>
+        <li>Vérifier si la transmission est possible selon Shannon.</li>
+        <li>Quel débit maximal (symboles/seconde) peut-on transmettre si la durée par symbole Tc = 1ms ?</li>
+        <li>Calculer H(X|Y) (équivoque du canal).</li>
+      </ol>
+    </div>
+    <details>
+      <summary>📗 Voir la solution complète</summary>
+      <div class="details-body">
+
+        <div style="font-size:0.83rem; font-weight:700; color:var(--accent2); margin-bottom:0.5rem">1. Capacité du CBS</div>
+        <div class="formula-box" style="font-size:0.8rem">C = 1 + p·log₂(p) + (1-p)·log₂(1-p)
+  = 1 + 0.1·log₂(0.1) + 0.9·log₂(0.9)
+  = 1 + 0.1×(-3.322) + 0.9×(-0.152)
+  = 1 - 0.332 - 0.137
+C ≈ 0.531 bits/usage</div>
+
+        <div style="font-size:0.83rem; font-weight:700; color:var(--accent2); margin:0.75rem 0 0.5rem">2. Vérification de Shannon</div>
+        <div class="formula-box" style="font-size:0.8rem">Condition : H(S) × Ds ≤ C
+
+Débit d'information source : Ds = H(S) × (symboles/s) = 0.8 × 1200 = 960 bits/s
+Capacité canal (bits/s) : C × (1/Tc) = 0.531 × 1000 = 531 bits/s
+
+960 bits/s > 531 bits/s  →  ❌ La transmission fiable est IMPOSSIBLE à ce débit !
+
+→ Il faut réduire le débit source ou utiliser un canal de plus grande capacité.</div>
+
+        <div style="font-size:0.83rem; font-weight:700; color:var(--accent2); margin:0.75rem 0 0.5rem">3. Débit maximal admissible</div>
+        <div class="formula-box" style="font-size:0.8rem">On cherche Ds_max tel que H(S)×Ds_max ≤ C/Tc
+
+Ds_max = C/(Tc × H(S)) = 0.531 / (0.001 × 0.8) = 0.531 / 0.0008 ≈ 664 symboles/s
+
+→ La source doit émettre au plus 664 symboles/seconde pour que Shannon soit respecté.</div>
+
+        <div style="font-size:0.83rem; font-weight:700; color:var(--accent2); margin:0.75rem 0 0.5rem">4. Équivoque H(X|Y)</div>
+        <div class="formula-box" style="font-size:0.8rem">H(X|Y) = H(Y|X) pour un CBS (symétrique)
+       = -p·log₂(p) - (1-p)·log₂(1-p)
+       = -0.1·log₂(0.1) - 0.9·log₂(0.9)
+       = 0.332 + 0.137
+H(X|Y) ≈ 0.469 bits/usage
+
+Vérification : C = H(X) - H(X|Y) = 1 - 0.469 = 0.531 ✓  (source équiprobable)</div>
+      </div>
+    </details>
+  </div>
+
+  <!-- ─── EX 5 : KRAFT + CODE COMPLET ─── -->
+  <div class="card" style="margin-bottom:1.25rem; border-color:rgba(79,142,247,0.3)">
+    <div class="card-title" style="color:var(--accent); font-size:0.95rem">📘 Exercice 5 — Kraft, Codes et Knat-McMillan</div>
+    <div class="info-box blue" style="margin-bottom:1rem; font-size:0.85rem">
+      Soit les codes binaires suivants pour une source à 5 symboles :
+      <br><strong>Code A :</strong> {0, 10, 110, 1110, 1111}
+      <br><strong>Code B :</strong> {0, 1, 00, 01, 10}
+      <br><strong>Code C :</strong> {0, 10, 110, 1110, 11110}
+      <ol style="margin-top:0.75rem; padding-left:1.2rem; line-height:2; font-size:0.83rem">
+        <li>Pour chaque code, vérifier l'inégalité de Kraft. Est-il préfixe ? Complet ?</li>
+        <li>Lequel est optimal au sens de Huffman ?</li>
+        <li>Appliquer Knat-McMillan à Code A.</li>
+      </ol>
+    </div>
+    <details>
+      <summary>📗 Voir la solution complète</summary>
+      <div class="details-body">
+
+        <div style="font-size:0.83rem; font-weight:700; color:var(--accent); margin-bottom:0.5rem">1. Vérification de Kraft</div>
+        <div class="formula-box" style="font-size:0.8rem">Code A : longueurs = 1, 2, 3, 4, 4
+  ΣKraft = 2⁻¹ + 2⁻² + 2⁻³ + 2⁻⁴ + 2⁻⁴
+         = 0.5 + 0.25 + 0.125 + 0.0625 + 0.0625 = 1.0 ≤ 1
+  → Kraft = 1 : Code préfixe ET complet  ✓
+
+Code B : longueurs = 1, 1, 2, 2, 2
+  → "0" est préfixe de "00" et "01" ! → PAS déchiffrable
+  ΣKraft = 2⁻¹ + 2⁻¹ + 2⁻² + 2⁻² + 2⁻² = 0.5 + 0.5 + 0.75 = 1.75 > 1
+  → Kraft > 1 : Code NON préfixe, NON déchiffrable  ✗
+
+Code C : longueurs = 1, 2, 3, 4, 5
+  ΣKraft = 2⁻¹ + 2⁻² + 2⁻³ + 2⁻⁴ + 2⁻⁵
+         = 0.5 + 0.25 + 0.125 + 0.0625 + 0.03125 = 0.969 < 1
+  → Kraft < 1 : Code préfixe mais PAS complet (redondant)  ⚠</div>
+
+        <div style="font-size:0.83rem; font-weight:700; color:var(--accent); margin:0.75rem 0 0.5rem">2. Code optimal de Huffman</div>
+        <div class="info-box blue" style="font-size:0.8rem">
+          <strong>Code A</strong> est le seul candidat valide (Kraft=1, préfixe, complet). C'est la structure typique du code de Huffman pour une source dont les probabilités décroissent rapidement (ex: géométrique). Code C est gaspilleur. Code B est invalide.
+        </div>
+
+        <div style="font-size:0.83rem; font-weight:700; color:var(--accent); margin:0.75rem 0 0.5rem">3. Knat-McMillan sur Code A</div>
+        <div class="formula-box" style="font-size:0.8rem">Knat-McMillan : Σ (Lp / V^(p-1)) = V  (pour code complet, V=2)
+
+Lp = nombre de mots de code de longueur p dans le code :
+  L₁ = 1  (le mot "0")
+  L₂ = 1  (le mot "10")
+  L₃ = 1  (le mot "110")
+  L₄ = 2  (les mots "1110" et "1111")
+
+Vérification :
+  L₁/V⁰ + L₂/V¹ + L₃/V² + L₄/V³
+= 1/1   + 1/2   + 1/4   + 2/8
+= 1.0   + 0.5   + 0.25  + 0.25
+= 2.0 = V  ✓  → Code complet intelligible confirmé</div>
+      </div>
+    </details>
+  </div>
+
+  <!-- ─── EX 6 : RLE + TAUX DE COMPRESSION ─── -->
+  <div class="card" style="margin-bottom:1.25rem; border-color:rgba(63,207,142,0.3)">
+    <div class="card-title" style="color:var(--accent3); font-size:0.95rem">📗 Exercice 6 — RLE, Taux de Compression & PSNR</div>
+    <div class="info-box green" style="margin-bottom:1rem; font-size:0.85rem">
+      Une image N&B de 100×8 pixels est représentée comme suit (W=blanc, N=noir) :<br>
+      Chaque ligne contient : <code style="color:var(--code)">WWWWWWWWNWWWWWWWWNNNW</code> (répétée sur toutes les lignes, puis padding à 100)
+      <ol style="margin-top:0.75rem; padding-left:1.2rem; line-height:2; font-size:0.83rem">
+        <li>Encoder la ligne donnée avec RLE.</li>
+        <li>Calculer le taux de compression τ (avant vs après RLE) pour 1 ligne de 100 pixels.</li>
+        <li>Une image 8 bits 256×256 a un MSE = 2.5 après compression. Calculer le PSNR.</li>
+      </ol>
+    </div>
+    <details>
+      <summary>📗 Voir la solution complète</summary>
+      <div class="details-body">
+
+        <div style="font-size:0.83rem; font-weight:700; color:var(--accent3); margin-bottom:0.5rem">1. Encodage RLE</div>
+        <div class="formula-box" style="font-size:0.8rem">Séquence : WWWWWWWWNWWWWWWWWNNNW (21 pixels)
++ padding jusqu'à 100 pixels = on suppose 79W supplémentaires
+
+Séquence complète : WWWWWWWWNWWWWWWWWNNNWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW (100W)
+
+RLE :
+  8W → (8, W)
+  1N → (1, N)
+  8W → (8, W)
+  3N → (3, N)
+  80W → (80, W)   [20-21 → 79+1 = 80W]
+
+RLE = 5 paires (10 valeurs) au lieu de 100 pixels
+→ Compression : 100 pixels → 10 valeurs = taux 10:1</div>
+
+        <div style="font-size:0.83rem; font-weight:700; color:var(--accent3); margin:0.75rem 0 0.5rem">2. Taux de compression τ</div>
+        <div class="formula-box" style="font-size:0.8rem">Volume original : 100 pixels × 1 bit = 100 bits (image N&B)
+
+Volume compressé : 5 paires (n, symbole)
+  n ∈ [1, 100] → besoin de 7 bits pour n
+  symbole → 1 bit (0=W, 1=N)
+  → 5 × (7+1) = 40 bits
+
+τ = Vol(compressé) / Vol(original) = 40 / 100 = 0.40
+Quotient q = 1/τ = 2.5  → compression 2.5:1</div>
+
+        <div style="font-size:0.83rem; font-weight:700; color:var(--accent3); margin:0.75rem 0 0.5rem">3. Calcul du PSNR</div>
+        <div class="formula-box" style="font-size:0.8rem">Image 8 bits : d = 2⁸ - 1 = 255 (valeur max pixel)
+MSE = 2.5
+
+PSNR = 10·log₁₀(d²/MSE)
+     = 10·log₁₀(255²/2.5)
+     = 10·log₁₀(65025/2.5)
+     = 10·log₁₀(26010)
+     = 10 × 4.415
+PSNR ≈ 44.15 dB  ✓
+
+Interprétation : PSNR > 40 dB → excellente qualité visuelle (quasi-transparent)</div>
+      </div>
+    </details>
+  </div>
+
+</div><!-- /.section exercices -->
 
 <!-- FOOTER -->
 <div style="text-align:center; padding:2rem 1rem; color:var(--muted); font-size:0.78rem; border-top:1px solid var(--border);">
