@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Codage & Compression MM — Révision Exam</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111520;
+    --surface2: #161b27;
+    --border: #1e2740;
+    --accent: #4f8ef7;
+    --accent2: #e05c5c;
+    --accent3: #3fcf8e;
+    --accent4: #f0a500;
+    --text: #dce3f0;
+    --muted: #6b7a9a;
+    --code: #a8d1f7;
+    --formula: #f7d88a;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,12,16,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 1.5rem;
+    display: flex; align-items: center; gap: 0; overflow-x: auto;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .nav-brand {
+    font-size: 1rem; font-weight: 800; color: var(--accent);
+    padding: 1rem 1rem 1rem 0; white-space: nowrap; margin-right: 1rem;
+    border-right: 1px solid var(--border);
+  }
+  nav a {
+    color: var(--muted); text-decoration: none; font-size: 0.78rem; font-weight: 600;
+    padding: 1rem 0.75rem; white-space: nowrap; border-bottom: 2px solid transparent;
+    transition: all 0.2s; letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  nav a:hover, nav a.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #0a0c10 0%, #0d1528 50%, #0a1020 100%);
+    padding: 4rem 2rem 3rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 20% 50%, rgba(79,142,247,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(63,207,142,0.06) 0%, transparent 60%);
+  }
+  .hero-tag {
+    display: inline-block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--accent3); background: rgba(63,207,142,0.1);
+    border: 1px solid rgba(63,207,142,0.25); border-radius: 4px; padding: 0.25rem 0.7rem;
+    margin-bottom: 1rem;
+  }
+  .hero h1 { font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 800; color: #fff; margin-bottom: 0.5rem; position: relative; }
+  .hero h1 span { color: var(--accent); }
+  .hero p { color: var(--muted); font-size: 1rem; margin-bottom: 2rem; position: relative; }
+  .hero-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; position: relative; }
+  .pill {
+    font-size: 0.75rem; font-weight: 600; padding: 0.35rem 0.9rem; border-radius: 20px;
+    letter-spacing: 0.03em;
+  }
+  .pill-blue { background: rgba(79,142,247,0.15); color: var(--accent); border: 1px solid rgba(79,142,247,0.3); }
+  .pill-green { background: rgba(63,207,142,0.12); color: var(--accent3); border: 1px solid rgba(63,207,142,0.25); }
+  .pill-red { background: rgba(224,92,92,0.12); color: var(--accent2); border: 1px solid rgba(224,92,92,0.25); }
+  .pill-yellow { background: rgba(240,165,0,0.12); color: var(--accent4); border: 1px solid rgba(240,165,0,0.25); }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  /* ── SECTIONS ── */
+  .section { margin-bottom: 3rem; }
+  .section-header {
+    display: flex; align-items: center; gap: 0.75rem;
+    margin-bottom: 1.5rem; padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 800; flex-shrink: 0;
+  }
+  .num-blue { background: rgba(79,142,247,0.2); color: var(--accent); }
+  .num-green { background: rgba(63,207,142,0.2); color: var(--accent3); }
+  .num-red { background: rgba(224,92,92,0.2); color: var(--accent2); }
+  .num-yellow { background: rgba(240,165,0,0.2); color: var(--accent4); }
+  .section-title { font-size: 1.3rem; font-weight: 800; color: #fff; }
+  .section-sub { font-size: 0.8rem; color: var(--muted); font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
+
+  /* ── CARDS ── */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.25rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .card:hover { border-color: rgba(79,142,247,0.4); transform: translateY(-2px); }
+  .card-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.75rem; color: #fff; letter-spacing: 0.02em; }
+  .card p { font-size: 0.82rem; color: var(--muted); line-height: 1.7; }
+
+  /* ── FORMULA BOXES ── */
+  .formula-box {
+    background: var(--surface2); border: 1px solid rgba(247,216,138,0.2);
+    border-left: 3px solid var(--formula); border-radius: 8px;
+    padding: 1rem 1.25rem; margin: 0.75rem 0;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--formula);
+    overflow-x: auto; white-space: pre-wrap;
+  }
+  .formula-label {
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: rgba(247,216,138,0.5); margin-bottom: 0.4rem;
+  }
+
+  /* ── KEY-VALUE TABLES ── */
+  .kv-table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; }
+  .kv-table th {
+    background: var(--surface2); color: var(--accent); font-size: 0.75rem; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase; padding: 0.6rem 0.8rem; text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .kv-table td { padding: 0.55rem 0.8rem; font-size: 0.82rem; border-bottom: 1px solid rgba(30,39,64,0.6); vertical-align: top; }
+  .kv-table tr:last-child td { border-bottom: none; }
+  .kv-table tr:hover td { background: rgba(79,142,247,0.04); }
+
+  /* ── ALGO STEPS ── */
+  .steps { display: flex; flex-direction: column; gap: 0.5rem; }
+  .step {
+    display: flex; gap: 0.75rem; align-items: flex-start;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem;
+  }
+  .step-num {
+    width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0; font-size: 0.72rem; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; margin-top: 0.1rem;
+  }
+  .step p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+  .step strong { color: var(--text); }
+
+  /* ── COMPARISON PANEL ── */
+  .compare-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+  }
+  .compare-box {
+    background: var(--surface); border-radius: 10px; padding: 1rem; border: 1px solid var(--border);
+  }
+  .compare-box h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.6rem; }
+
+  /* ── QUIZ ── */
+  .quiz-section { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+  .quiz-question { margin-bottom: 1.5rem; }
+  .quiz-question p { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 0.75rem; }
+  .quiz-options { display: flex; flex-direction: column; gap: 0.4rem; }
+  .quiz-opt {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 6px;
+    padding: 0.6rem 0.9rem; font-size: 0.82rem; cursor: pointer;
+    transition: all 0.15s; text-align: left; color: var(--text); width: 100%;
+  }
+  .quiz-opt:hover { border-color: var(--accent); color: var(--accent); }
+  .quiz-opt.correct { background: rgba(63,207,142,0.15); border-color: var(--accent3); color: var(--accent3); }
+  .quiz-opt.wrong { background: rgba(224,92,92,0.12); border-color: var(--accent2); color: var(--accent2); }
+  .quiz-feedback { font-size: 0.8rem; margin-top: 0.5rem; padding: 0.5rem 0.75rem; border-radius: 6px; display: none; }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: rgba(63,207,142,0.1); color: var(--accent3); }
+  .quiz-feedback.nok { background: rgba(224,92,92,0.08); color: var(--accent2); }
+
+  /* ── HUFFMAN DEMO ── */
+  .huffman-demo { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; }
+  .huff-row { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; margin-bottom: 0.4rem; }
+  .huff-sym { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; padding: 0.2rem 0.5rem; border-radius: 4px; }
+  .huff-arrow { color: var(--muted); font-size: 0.9rem; }
+  .huff-code { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: var(--accent); letter-spacing: 0.1em; }
+
+  /* ── HIGHLIGHT LISTS ── */
+  ul.hl { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
+  ul.hl li { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.83rem; color: var(--muted); line-height: 1.6; }
+  ul.hl li::before { content: '▸'; color: var(--accent); flex-shrink: 0; margin-top: 0.05em; font-size: 0.7rem; }
+
+  /* ── TAG BADGES ── */
+  .badge { display: inline-block; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.2rem 0.5rem; border-radius: 4px; margin-right: 0.3rem; }
+  .badge-def { background: rgba(79,142,247,0.15); color: var(--accent); }
+  .badge-thm { background: rgba(63,207,142,0.15); color: var(--accent3); }
+  .badge-ex { background: rgba(240,165,0,0.15); color: var(--accent4); }
+  .badge-prop { background: rgba(224,92,92,0.15); color: var(--accent2); }
+
+  /* ── INFO BOXES ── */
+  .info-box {
+    border-radius: 8px; padding: 0.9rem 1.1rem; margin: 0.75rem 0; font-size: 0.83rem; line-height: 1.65;
+  }
+  .info-box.blue { background: rgba(79,142,247,0.08); border: 1px solid rgba(79,142,247,0.25); color: #a8c8f8; }
+  .info-box.green { background: rgba(63,207,142,0.08); border: 1px solid rgba(63,207,142,0.25); color: #8ee8c0; }
+  .info-box.red { background: rgba(224,92,92,0.08); border: 1px solid rgba(224,92,92,0.25); color: #f0a8a8; }
+  .info-box.yellow { background: rgba(240,165,0,0.08); border: 1px solid rgba(240,165,0,0.25); color: #f7d88a; }
+  .info-box strong { color: #fff; }
+
+  /* ── ACCORDION ── */
+  details {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 0.5rem;
+  }
+  summary {
+    padding: 0.85rem 1.1rem; cursor: pointer; font-size: 0.85rem; font-weight: 700;
+    color: var(--text); list-style: none; display: flex; justify-content: space-between; align-items: center;
+  }
+  summary::after { content: '+'; color: var(--accent); font-size: 1.1rem; }
+  details[open] summary::after { content: '−'; }
+  details[open] { border-color: rgba(79,142,247,0.35); }
+  .details-body { padding: 0 1.1rem 1rem; font-size: 0.82rem; color: var(--muted); line-height: 1.7; }
+
+  /* ── SCORE BAR ── */
+  .score-bar { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; margin-bottom: 1rem; }
+  .score-num { font-size: 2rem; font-weight: 800; color: var(--accent); font-family: 'JetBrains Mono', monospace; }
+  .score-label { font-size: 0.78rem; color: var(--muted); }
+  #reset-btn {
+    margin-left: auto; background: rgba(79,142,247,0.12); border: 1px solid rgba(79,142,247,0.3);
+    color: var(--accent); font-size: 0.78rem; font-weight: 700; padding: 0.4rem 1rem; border-radius: 6px;
+    cursor: pointer; transition: all 0.2s; letter-spacing: 0.05em;
+  }
+  #reset-btn:hover { background: rgba(79,142,247,0.22); }
+
+  /* ── CHANNEL DIAGRAM ── */
+  .channel-diag {
+    display: flex; align-items: center; justify-content: center; gap: 0; flex-wrap: wrap;
+    padding: 1.5rem; background: var(--surface2); border-radius: 10px; border: 1px solid var(--border);
+  }
+  .ch-box {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 0.6rem 1rem; font-size: 0.8rem; font-weight: 700; text-align: center; min-width: 90px;
+  }
+  .ch-arrow { color: var(--accent); font-size: 1.4rem; padding: 0 0.5rem; }
+  .ch-noise { color: var(--accent2); font-size: 0.72rem; text-align: center; padding: 0 0.3rem; }
+
+  /* ── LZW TABLE ── */
+  .lzw-table { width: 100%; border-collapse: collapse; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; }
+  .lzw-table th { background: rgba(79,142,247,0.15); color: var(--accent); padding: 0.5rem 0.7rem; font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; }
+  .lzw-table td { padding: 0.4rem 0.7rem; border-bottom: 1px solid rgba(30,39,64,0.5); color: var(--text); }
+  .lzw-table tr:last-child td { border-bottom: none; }
+
+  /* ── RESPONSIVENESS ── */
+  @media (max-width: 640px) {
+    .compare-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 1.6rem; }
+    .container { padding: 1.5rem 1rem; }
+    nav a { font-size: 0.72rem; padding: 0.85rem 0.55rem; }
+  }
+
+  /* ── PROGRESS INDICATOR ── */
+  .progress-ring { display: flex; gap: 0.4rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .prog-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border); transition: background 0.3s;
+  }
+  .prog-dot.done { background: var(--accent3); }
+  .prog-dot.active { background: var(--accent); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">📡 Codage MM</div>
+  <a href="#theorie">Théorie Info</a>
+  <a href="#source">Source</a>
+  <a href="#entropie">Entropie</a>
+  <a href="#canal">Canal</a>
+  <a href="#codage-source">Codage Source</a>
+  <a href="#huffman">Huffman</a>
+  <a href="#arithmetique">Arithmétique</a>
+  <a href="#lzw">LZW/RLE</a>
+  <a href="#quiz">Quiz 🎯</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Révision Exam — Dr. Randa BOUKHRIS</div>
+  <h1>Codage et Compression<br><span>Données Multimédia</span></h1>
+  <p>Tout le cours condensé pour décrocher 20/20 demain 🎯</p>
+  <div class="hero-pills">
+    <span class="pill pill-blue">Théorie de l'information</span>
+    <span class="pill pill-green">Codage source (Shannon, Huffman)</span>
+    <span class="pill pill-red">Canal de transmission</span>
+    <span class="pill pill-yellow">Arithmétique & LZW</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 1: THÉORIE DE L'INFORMATION -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="theorie">
+  <div class="section-header">
+    <div class="section-num num-blue">1</div>
+    <div>
+      <div class="section-title">Théorie de l'Information</div>
+      <div class="section-sub">Fondements & Objectifs</div>
+    </div>
+  </div>
+
+  <div class="channel-diag" style="margin-bottom:1rem;">
+    <div class="ch-box" style="color:var(--accent3)">Source</div>
+    <span class="ch-arrow">→</span>
+    <div class="ch-box">Codeur<br><small style="color:var(--accent);font-size:0.7rem">source</small></div>
+    <span class="ch-arrow">→</span>
+    <div class="ch-box">Codeur<br><small style="color:var(--accent2);font-size:0.7rem">canal</small></div>
+    <span class="ch-arrow">→</span>
+    <div class="ch-box" style="position:relative;">Canal
+      <div style="position:absolute;bottom:-1.3rem;left:50%;transform:translateX(-50%);font-size:0.65rem;color:var(--accent2);white-space:nowrap">⬆ Bruit</div>
+    </div>
+    <span class="ch-arrow" style="margin-top:0">→</span>
+    <div class="ch-box">Décodeur<br><small style="font-size:0.7rem;color:var(--accent2)">canal</small></div>
+    <span class="ch-arrow">→</span>
+    <div class="ch-box">Décodeur<br><small style="font-size:0.7rem;color:var(--accent)">source</small></div>
+    <span class="ch-arrow">→</span>
+    <div class="ch-box" style="color:var(--accent3)">Destination</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🎯 Deux problèmes fondamentaux</div>
+      <ul class="hl">
+        <li><strong>Compression (codage source)</strong> — réduire la taille des données, utiliser le minimum de bits</li>
+        <li><strong>Correction d'erreurs (codage canal)</strong> — ajouter des bits de redondance pour corriger les erreurs du canal</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">📐 Deux solutions</div>
+      <ul class="hl">
+        <li><strong>Codeur source</strong> — placé juste après la source, minimise le nombre de bits</li>
+        <li><strong>Codeur canal</strong> — placé juste avant le canal, corrige les défauts du canal (bruit)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 2: LA SOURCE -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="source">
+  <div class="section-header">
+    <div class="section-num num-green">2</div>
+    <div>
+      <div class="section-title">La Source Discrète</div>
+      <div class="section-sub">Définitions essentielles</div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title"><span class="badge badge-def">Def</span> Source discrète</div>
+      <p>Émet des symboles appartenant à un alphabet fini <code style="color:var(--code)">A = {s₀, s₁, …, sₖ₋₁}</code></p>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="badge badge-def">Def</span> Source aléatoire</div>
+      <p>Chaque symbole sₖ est émis avec probabilité <code style="color:var(--code)">P(S=sₖ) = pₖ</code>, avec <code style="color:var(--formula)">Σpₖ = 1</code></p>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="badge badge-def">Def</span> Source sans mémoire</div>
+      <p>Le symbole émis à l'instant k est <strong>indépendant</strong> des symboles précédemment émis</p>
+    </div>
+  </div>
+
+  <div class="info-box blue" style="margin-top:1rem">
+    💡 La <strong>quantité d'information</strong> d'un symbole est <strong>inversement proportionnelle à sa probabilité</strong>. Un événement rare = beaucoup d'information (surprise). Un événement certain = zéro information.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 3: QUANTITÉ D'INFO & ENTROPIE -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="entropie">
+  <div class="section-header">
+    <div class="section-num num-yellow">3</div>
+    <div>
+      <div class="section-title">Quantité d'Information & Entropie</div>
+      <div class="section-sub">Formules clés à maîtriser</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <div class="formula-label">Quantité d'information d'un symbole</div>
+      <div class="formula-box">I(sₖ) = -log₂(pₖ)     [bits]
+
+• I(sₖ) = 0  si  pₖ = 1  (aucune surprise)
+• I(sₖ) ≥ 0  pour  0 ≤ pₖ ≤ 1
+• I(sₖ) > I(sᵢ)  si  pₖ &lt; pᵢ  (plus rare = plus d'info)
+• I(sₖsᵢ) = I(sₖ) + I(sᵢ)  si indépendants</div>
+
+      <div class="formula-label" style="margin-top:1rem">Entropie d'une source (info moyenne / symbole)</div>
+      <div class="formula-box">H(S) = -Σ pₖ · log₂(pₖ)
+      = Σ pₖ · log₂(1/pₖ)    [bits/symbole]
+
+Bornes : 0 ≤ H(S) ≤ log₂(k)
+
+H(S) = 0  →  source certaine (1 seul symbole)
+H(S) = log₂(k)  →  symboles équiprobables (max!)</div>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:0.75rem">
+        <div class="card-title">🎲 Exemple : Source binaire</div>
+        <p style="font-size:0.81rem">P(1) = 0.3, P(0) = 0.7</p>
+        <div class="formula-box" style="margin-top:0.5rem; font-size:0.82rem">H(S) = -0.7·log₂(0.7) - 0.3·log₂(0.3)
+     = 0.7×0.515 + 0.3×1.737
+     ≈ 0.88 bits/symbole</div>
+      </div>
+      <div class="card">
+        <div class="card-title">🎲 Exemple : Dé truqué</div>
+        <p style="font-size:0.81rem">P(1)=P(6)=0.2 ; P(2)=P(3)=P(4)=P(5)=0.15</p>
+        <div class="formula-box" style="margin-top:0.5rem; font-size:0.82rem">H(S) = 2×[-0.2·log₂(0.2)]
+      + 4×[-0.15·log₂(0.15)]
+     ≈ 2.571 bits/symbole
+
+Dé non truqué : H = log₂(6) ≈ 2.585 sh
+→ L'entropie est max si équiprobable !</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box green" style="margin-top:1rem">
+    <strong>Propriété clé :</strong> L'entropie est maximale quand les symboles sont équiprobables. Plus l'incertitude est grande, plus l'entropie est élevée. Elle ne dépend pas des symboles eux-mêmes, mais de leurs probabilités.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 4: CANAL DE TRANSMISSION -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="canal">
+  <div class="section-header">
+    <div class="section-num num-red">4</div>
+    <div>
+      <div class="section-title">Canal de Transmission</div>
+      <div class="section-sub">Capacité, information mutuelle, canaux classiques</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card" style="margin-bottom:0.75rem">
+        <div class="card-title"><span class="badge badge-def">Def</span> Canal Binaire Symétrique (CBS)</div>
+        <ul class="hl">
+          <li>Xₖ, Yₖ ∈ {0,1}</li>
+          <li><strong>p</strong> = probabilité d'erreur par bit</li>
+          <li><strong>1−p</strong> = probabilité de transmission correcte</li>
+          <li>Les 0 et 1 sont affectés <em>de la même façon</em></li>
+        </ul>
+        <div class="formula-box" style="margin-top:0.75rem; font-size:0.82rem">Capacité CBS :
+C = 1 + p·log₂(p) + (1-p)·log₂(1-p)
+
+• p=0 → C=1 (sans bruit, parfait)
+• p=0.5 → C=0 (canal inutile!)
+• p=1 → C=1 (inversion parfaite → corrigeable)</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:0.75rem">
+        <div class="card-title"><span class="badge badge-def">Def</span> Information Mutuelle</div>
+        <div class="formula-box" style="font-size:0.85rem">I(A,B) = H(A) - H(A|B)
+       = H(B) - H(B|A)
+       = H(A) + H(B) - H(A,B)
+
+• I(A,B) ≥ 0
+• Nul si A et B indépendants
+• H(A|B) = "information perdue" (bruit)</div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="badge badge-def">Def</span> Capacité d'un canal</div>
+        <div class="formula-box" style="font-size:0.85rem">C = max_{p(xᵢ)} I(X,Y)
+  = max { H(X) - H(X|Y) }
+
+Débit max = C/Tc  [bits/s]
+  (Tc = durée par symbole)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box yellow">
+    <strong>Théorème de Shannon :</strong> Il existe un code permettant de transmettre à la capacité du canal si le débit d'information de la source vérifie <code style="color:var(--formula)">H(S) × Ds ≤ C</code>
+  </div>
+
+  <div style="margin-top:1rem">
+    <div class="card-title" style="margin-bottom:0.75rem; color:#fff; font-size:0.85rem">🔌 Canal avec Effacement (CBE)</div>
+    <div class="info-box blue">
+      Entrées ∈ {0,1}, sorties ∈ {0, e, 1}.<br>
+      <strong>e</strong> = symbole effacé (perdu) avec probabilité α.<br>
+      La transmission correcte se fait avec probabilité <strong>1−α</strong>.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 5: CODAGE SOURCE -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="codage-source">
+  <div class="section-header">
+    <div class="section-num num-blue">5</div>
+    <div>
+      <div class="section-title">Codage Source — Concepts fondamentaux</div>
+      <div class="section-sub">Codes préfixes, Kraft, efficacité</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <table class="kv-table">
+        <thead><tr><th>Propriété</th><th>Définition</th></tr></thead>
+        <tbody>
+          <tr><td><strong style="color:var(--accent)">Régulier</strong></td><td>Deux symboles distincts → deux mots de code distincts (injectif)</td></tr>
+          <tr><td><strong style="color:var(--accent)">Déchiffrable</strong></td><td>Toute suite de mots de code a une unique interprétation</td></tr>
+          <tr><td><strong style="color:var(--accent3)">Préfixe</strong></td><td>Aucun mot de code n'est le début d'un autre (condition suffisante)</td></tr>
+          <tr><td><strong style="color:var(--accent3)">Instantané</strong></td><td>Décodable au fur et à mesure (⟺ préfixe)</td></tr>
+          <tr><td><strong style="color:var(--accent4)">Complet</strong></td><td>Intelligible + tout ajout le rend non intelligible. Lp=0 pour p > n</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div class="formula-label">Longueur moyenne d'un code</div>
+      <div class="formula-box">|φ| = Σ |φ(x)| · pₓ    [bits/symbole]
+
+Efficacité : E(φ) = H / |φ|  (≤ 1 toujours)
+
+Longueur min théorique :
+  l_min = H(S) / log₂(V)
+
+Rendement : R = l_min / l_moy
+Redondance : ρ = 1 - R</div>
+
+      <div class="formula-label" style="margin-top:1rem">Inégalité de Kraft (condition nécessaire & suffisante)</div>
+      <div class="formula-box">Σᵢ q^(-nᵢ) ≤ 1
+
+q = valence (2 pour binaire)
+nᵢ = longueur du i-ème mot de code
+
+→ Code préfixe existe ssi cette inégalité est satisfaite</div>
+    </div>
+  </div>
+
+  <div class="info-box red" style="margin-top:1rem">
+    <strong>Attention :</strong> Être préfixe est une condition <em>suffisante</em> mais <strong>non nécessaire</strong> pour la décodabilité unique. Un code peut être déchiffrable sans être préfixe (mais c'est rare).
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 6: HUFFMAN -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="huffman">
+  <div class="section-header">
+    <div class="section-num num-green">6</div>
+    <div>
+      <div class="section-title">Codage de Huffman</div>
+      <div class="section-sub">Shannon-Fano, Huffman classique & variance minimale</div>
+    </div>
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-box" style="border-color:rgba(79,142,247,0.3)">
+      <h4 style="color:var(--accent)">📊 Algorithme Shannon-Fano</h4>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num" style="background:rgba(79,142,247,0.2);color:var(--accent)">1</div>
+          <p>Ranger les symboles par <strong>probabilité décroissante</strong></p>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:rgba(79,142,247,0.2);color:var(--accent)">2</div>
+          <p>Diviser en 2 groupes G₀ et G₁ de probabilités <strong>les plus voisines</strong> (sans changer l'ordre)</p>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:rgba(79,142,247,0.2);color:var(--accent)">3</div>
+          <p>Subdiviser récursivement chaque groupe Gᵢ → Gᵢ₀ et Gᵢ₁</p>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:rgba(79,142,247,0.2);color:var(--accent)">4</div>
+          <p>S'arrêter quand chaque groupe = 1 seul élément. L'indice du groupe = le <strong>mot de code</strong></p>
+        </div>
+      </div>
+    </div>
+    <div class="compare-box" style="border-color:rgba(63,207,142,0.3)">
+      <h4 style="color:var(--accent3)">🌲 Algorithme Huffman</h4>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num" style="background:rgba(63,207,142,0.2);color:var(--accent3)">1</div>
+          <p>Construire un arbre en partant des <strong>feuilles</strong> les plus profondes (états de la source)</p>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:rgba(63,207,142,0.2);color:var(--accent3)">2</div>
+          <p>À chaque étape, <strong>fusionner les 2 nœuds de plus faible probabilité</strong> en un nœud somme</p>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:rgba(63,207,142,0.2);color:var(--accent3)">3</div>
+          <p>S'arrêter quand il ne reste qu'<strong>une seule feuille</strong> (la racine)</p>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:rgba(63,207,142,0.2);color:var(--accent3)">4</div>
+          <p>Le <strong>parcours inverse</strong> de l'arbre fournit les mots de code (0 = branche haute, 1 = basse)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Huffman Example -->
+  <div class="card" style="margin-top:1rem">
+    <div class="card-title">🎯 Exemple Huffman — Source à 5 symboles</div>
+    <div class="grid-2">
+      <div>
+        <table class="kv-table">
+          <thead><tr><th>Symbole</th><th>Probabilité</th><th>Code Huffman</th></tr></thead>
+          <tbody>
+            <tr><td>s₁</td><td>0.35</td><td><code style="color:var(--accent)">00</code></td></tr>
+            <tr><td>s₂</td><td>0.22</td><td><code style="color:var(--accent)">01</code></td></tr>
+            <tr><td>s₃</td><td>0.18</td><td><code style="color:var(--accent)">10</code></td></tr>
+            <tr><td>s₄</td><td>0.15</td><td><code style="color:var(--accent)">110</code></td></tr>
+            <tr><td>s₅</td><td>0.10</td><td><code style="color:var(--accent)">111</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="formula-box" style="font-size:0.82rem">φ = 0.35×2 + 0.22×2 + 0.18×2 + 0.15×3 + 0.10×3
+  = 0.70 + 0.44 + 0.36 + 0.45 + 0.30
+  = 2.25 bits/symbole
+
+H(S) = 2.19 bits/symbole
+
+Efficacité = 2.19/2.25 ≈ 0.973 → très bon !</div>
+        <div class="info-box green" style="margin-top:0.5rem; font-size:0.8rem">
+          <strong>Propriété :</strong> Huffman fournit un code instantané de <em>longueur moyenne minimale</em>. Les deux symboles les moins probables ont les codes les plus longs et ne diffèrent que d'un bit.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Variance minimale -->
+  <div class="card" style="margin-top:1rem">
+    <div class="card-title" style="color:var(--accent4)">⚡ Variance Minimale — Pourquoi c'est important</div>
+    <div class="grid-2">
+      <ul class="hl">
+        <li>Plusieurs arbres de Huffman peuvent exister avec la <strong>même longueur moyenne</strong></li>
+        <li>Le codeur à <strong>variance minimale</strong> a le décodage le plus <em>rapide</em> (temps réel)</li>
+        <li>Mots de code de longueurs proches → lecture en blocs → plus rapide</li>
+      </ul>
+      <div>
+        <div class="formula-box" style="font-size:0.8rem">Var = Σ pᵢ · (lᵢ - |φ|)²
+
+Règle : en cas d'égalité de probabilité,
+placer l'ensemble avec le plus de lettres
+en haut (à droite dans l'arbre)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 7: CODAGE ARITHMÉTIQUE -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="arithmetique">
+  <div class="section-header">
+    <div class="section-num num-yellow">7</div>
+    <div>
+      <div class="section-title">Codage Arithmétique</div>
+      <div class="section-sub">Statique & Adaptatif — JPEG, JBIG</div>
+    </div>
+  </div>
+
+  <div class="info-box yellow">
+    <strong>Principe :</strong> Associer à toute une chaîne de symboles un <strong>nombre réel dans [0,1[</strong>. Permet de coder sur un nombre <em>non entier</em> de bits par symbole → plus efficace que Huffman.
+  </div>
+
+  <div class="grid-2" style="margin-top:1rem">
+    <div>
+      <div class="card-title" style="color:var(--text);margin-bottom:0.75rem;font-size:0.85rem">📐 Procédure de codage statique</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num" style="background:rgba(240,165,0,0.2);color:var(--accent4)">1</div>
+          <p>Diviser [0,1[ en sous-intervalles <strong>proportionnels aux probabilités</strong> des symboles</p>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:rgba(240,165,0,0.2);color:var(--accent4)">2</div>
+          <p>Pour chaque symbole de la chaîne, <strong>choisir son sous-intervalle</strong> comme nouvel intervalle de travail</p>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:rgba(240,165,0,0.2);color:var(--accent4)">3</div>
+          <p>À la fin, choisir un <strong>nombre réel</strong> dans l'intervalle final → le convertir en binaire</p>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:rgba(240,165,0,0.2);color:var(--accent4)">4</div>
+          <p>Précision = nombre de chiffres après la virgule = <strong>longueur de la chaîne</strong></p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:0.75rem">
+        <div class="card-title">📊 Exemple : coder "bbac"</div>
+        <p style="font-size:0.8rem; color:var(--muted)">a:0.7, b:0.1, c:0.2</p>
+        <div class="formula-box" style="font-size:0.78rem; margin-top:0.5rem">Itération 1 (b): intervalle = [0.7, 0.8[
+Itération 2 (b): intervalle = [0.77, 0.78[
+Itération 3 (a): intervalle = [0.770, 0.777[
+Itération 4 (c): intervalle = [0.7756, 0.7770[
+
+→ Code : 0.7762 (appartient à l'intervalle)</div>
+      </div>
+      <div class="card">
+        <div class="card-title">🔄 Décodage arithmétique</div>
+        <div class="formula-box" style="font-size:0.78rem">Reçu: 0.7762
+0.7762 ∈ [0.7, 0.8[ → b, soustraire 0.7, ÷0.1
+0.762 ∈ [0.7, 0.8[ → b, soustraire 0.7, ÷0.1
+0.62 ∈ [0.0, 0.7[ → a, soustraire 0.0, ÷0.7
+0.88 ∈ [0.8, 1.0[ → c  ✓  "bbac"</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:1rem">
+    <div class="card">
+      <div class="card-title" style="color:var(--accent3)">🔄 Codage Arithmétique Adaptatif</div>
+      <div class="grid-2">
+        <ul class="hl">
+          <li><strong>Pas de connaissance a priori</strong> des probabilités</li>
+          <li>Initialisation : tous les symboles ont <strong>le même compteur = 1</strong> (équiprobable)</li>
+          <li>Après chaque symbole codé, <strong>incrémenter son compteur</strong> → mettre à jour les probabilités</li>
+        </ul>
+        <ul class="hl">
+          <li>Le décodeur fait exactement la <strong>même mise à jour</strong> après chaque décodage</li>
+          <li>Aucune transmission des probabilités en en-tête nécessaire</li>
+          <li>Utilisé dans <strong>JPEG2000, MPEG4, JBIG</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box red" style="margin-top:0.75rem">
+    <strong>Huffman vs Arithmétique :</strong> Arithmétique est légèrement + efficace (pas d'entier de bits par symbole) mais + lourd en calcul. Huffman reste le standard pour les applications temps réel.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 8: RLE & LZW -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="lzw">
+  <div class="section-header">
+    <div class="section-num num-red">8</div>
+    <div>
+      <div class="section-title">RLE & Codage à Dictionnaire (LZW)</div>
+      <div class="section-sub">Redondance spatiale & temporelle</div>
+    </div>
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-box" style="border-color:rgba(224,92,92,0.3)">
+      <h4 style="color:var(--accent2)">🔁 RLE — Run-Length Encoding</h4>
+      <ul class="hl" style="margin-bottom:0.75rem">
+        <li>Exploite les <strong>séquences de symboles répétés</strong></li>
+        <li>Remplace une suite de n répétitions par <code style="color:var(--code)">(n, symbole)</code></li>
+        <li>Efficace pour images N&B, fax, images médicales</li>
+        <li>Inefficace si peu de répétitions</li>
+      </ul>
+      <div class="formula-box" style="font-size:0.8rem">Exemple :
+"HellooooooooWoooooooorld"
+→ 1H 1e 2l 8o 1W 8o 1r 1l 1d
+→ 24 car. → 18 car. = -25% ✓
+
+"HelloWorld"
+→ 1H 1e 2l 1o 1W 1o 1r 1l 1d
+→ 10 car. → 18 car. = +80% ✗ (contre-productif)</div>
+    </div>
+    <div class="compare-box" style="border-color:rgba(79,142,247,0.3)">
+      <h4 style="color:var(--accent)">📚 LZW — Codage à Dictionnaire</h4>
+      <ul class="hl" style="margin-bottom:0.75rem">
+        <li>Construit un <strong>dictionnaire dynamique</strong> des séquences vues</li>
+        <li>Encode les chaînes récurrentes par leurs <strong>indices</strong> dans le dictionnaire</li>
+        <li>Adaptatif — pas besoin de transmettre le dictionnaire</li>
+        <li>Utilisé dans <strong>GIF, ZIP, PDF, PNG</strong></li>
+      </ul>
+      <div class="formula-box" style="font-size:0.8rem">Principe :
+1. Lire le flux d'entrée caractère par caractère
+2. Si la chaîne courante est dans le dico → continuer
+3. Sinon → émettre l'index + ajouter la chaîne au dico
+4. Le décodeur reconstruit le même dico en parallèle</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1rem">
+    <div class="card-title">📠 Codage Huffman Modifié — FAX</div>
+    <div class="grid-2">
+      <ul class="hl">
+        <li>Norme ITU depuis 1993 pour les machines FAX</li>
+        <li>Combine <strong>RLE + Huffman</strong> sur images N&B</li>
+        <li>Ligne de balayage → séquences de pixels blancs/noirs</li>
+        <li>Codes terminaux (1-63 pixels) + codes de mise en page (multiples de 64)</li>
+      </ul>
+      <div class="formula-box" style="font-size:0.78rem">Exemple :
+WWWWWWWWWWWWBWWWWWWWWWWWWBBBW…
+→ RLE : 12W 1B 12W 3B 24W 1B 14W
+→ Huffman sur les longueurs de runs
+→ Compression 97× pour ligne noire!</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 9: FORMULAIRE RÉCAP -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num num-yellow">📋</div>
+    <div>
+      <div class="section-title">Aide-mémoire — Toutes les formules</div>
+      <div class="section-sub">À mémoriser absolument</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <details open>
+        <summary>Quantité d'information & Entropie</summary>
+        <div class="details-body">
+          <div class="formula-box" style="font-size:0.82rem">I(sₖ) = -log₂(pₖ)          [bits]
+H(S) = -Σ pₖ log₂(pₖ)   [bits/symbole]
+0 ≤ H(S) ≤ log₂(k)
+H(S)_max = log₂(k)  (si équiprobable)</div>
+        </div>
+      </details>
+      <details>
+        <summary>Information mutuelle & Canal</summary>
+        <div class="details-body">
+          <div class="formula-box" style="font-size:0.82rem">I(A,B) = H(A) - H(A|B)
+C = max_{p(xᵢ)} I(X,Y)
+H(X|Y) = ΣΣ p(xᵢ,yⱼ) log₂(1/p(xᵢ|yⱼ))
+CBS : C = 1+p·log₂(p)+(1-p)·log₂(1-p)</div>
+        </div>
+      </details>
+      <details>
+        <summary>Codes & Kraft</summary>
+        <div class="details-body">
+          <div class="formula-box" style="font-size:0.82rem">Kraft : Σ q^(-nᵢ) ≤ 1
+Shannon : H/log₂(V) ≤ lᵢ &lt; H/log₂(V) + 1
+Longueur moy : |φ| = Σ lᵢ·pᵢ
+Efficacité : E = H(S) / |φ| · log₂(V)
+Rendement : R = l_min / l_moy
+Redondance : ρ = 1 - R</div>
+        </div>
+      </details>
+    </div>
+    <div>
+      <details>
+        <summary>Codage arithmétique</summary>
+        <div class="details-body">
+          <div class="formula-box" style="font-size:0.82rem">Borne inf : Lk = Lk-1 + p_prev × (borne inf sym)
+Longueur : Wk = Wk-1 × p(sₖ)
+Code = tout réel dans [L_final, L_final + W_final[
+Décodage : (code - borne_inf_sym) / p(sym)</div>
+        </div>
+      </details>
+      <details>
+        <summary>Critères d'évaluation d'un codeur source</summary>
+        <div class="details-body">
+          <div class="formula-box" style="font-size:0.82rem">Taux de compression τ = Vol(Ĩ) / Vol(I)
+Quotient q = Vol(I) / Vol(Ĩ) = 1/τ
+MSE = (1/3MN) ΣΣΣ (I - Î)²
+PSNR = 10·log₁₀(d²/MSE)   [dB]
+(d = valeur max pixel, ex: 255)</div>
+        </div>
+      </details>
+      <details>
+        <summary>Knat-McMillan (Kraft généralisée)</summary>
+        <div class="details-body">
+          <div class="formula-box" style="font-size:0.82rem">Σ (Lp / V^(p-1)) = V
+p de 1 à n
+Lp = nombre de mots de code de longueur p
+V = valence du code (binaire V=2)
+→ Condition pour code complet intelligible</div>
+        </div>
+      </details>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 10: QUIZ INTERACTIF -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section" id="quiz">
+  <div class="section-header">
+    <div class="section-num num-green">🎯</div>
+    <div>
+      <div class="section-title">Quiz — Teste tes connaissances</div>
+      <div class="section-sub">20 questions type examen</div>
+    </div>
+  </div>
+
+  <div class="quiz-section">
+    <div class="score-bar">
+      <div>
+        <div class="score-num"><span id="score">0</span>/<span id="total">0</span></div>
+        <div class="score-label">bonnes réponses</div>
+      </div>
+      <button id="reset-btn" onclick="resetQuiz()">↺ Recommencer</button>
+    </div>
+
+    <!-- Q1 -->
+    <div class="quiz-question" id="q1">
+      <p>1. Un symbole de probabilité 1/8 a quelle quantité d'information ?</p>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,'q1',false)">1 bit</button>
+        <button class="quiz-opt" onclick="answer(this,'q1',false)">2 bits</button>
+        <button class="quiz-opt" onclick="answer(this,'q1',true)">3 bits</button>
+        <button class="quiz-opt" onclick="answer(this,'q1',false)">4 bits</button>
+      </div>
+      <div class="quiz-feedback" id="q1-fb">I(s) = -log₂(1/8) = log₂(8) = 3 bits ✓</div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="quiz-question" id="q2">
+      <p>2. L'entropie est maximale quand :</p>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,'q2',false)">Un symbole a probabilité 1</button>
+        <button class="quiz-opt" onclick="answer(this,'q2',true)">Tous les symboles sont équiprobables</button>
+        <button class="quiz-opt" onclick="answer(this,'q2',false)">La source a peu de symboles</button>
+        <button class="quiz-opt" onclick="answer(this,'q2',false)">Le débit est maximal</button>
+      </div>
+      <div class="quiz-feedback" id="q2-fb">H_max = log₂(k) atteint quand p₁=p₂=…=pₖ=1/k ✓</div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="quiz-question" id="q3">
+      <p>3. Un code est dit "préfixe" si :</p>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,'q3',false)">Tous les mots ont la même longueur</button>
+        <button class="quiz-opt" onclick="answer(this,'q3',false)">Le code commence toujours par 0</button>
+        <button class="quiz-opt" onclick="answer(this,'q3',true)">Aucun mot de code n'est le début d'un autre</button>
+        <button class="quiz-opt" onclick="answer(this,'q3',false)">La somme des longueurs est minimale</button>
+      </div>
+      <div class="quiz-feedback" id="q3-fb">Code préfixe = instantané = décodable au fur et à mesure ✓</div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="quiz-question" id="q4">
+      <p>4. Pour un Canal Binaire Symétrique avec p=0.5, la capacité est :</p>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,'q4',false)">1 bit</button>
+        <button class="quiz-opt" onclick="answer(this,'q4',false)">0.5 bit</button>
+        <button class="quiz-opt" onclick="answer(this,'q4',true)">0 bit</button>
+        <button class="quiz-opt" onclick="answer(this,'q4',false)">2 bits</button>
+      </div>
+      <div class="quiz-feedback" id="q4-fb">p=0.5 → C = 1+0.5·log₂(0.5)+0.5·log₂(0.5) = 1-1 = 0 (canal inutile !) ✓</div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="quiz-question" id="q5">
+      <p>5. L'inégalité de Kraft pour un code binaire (q=2) à longueurs n₁=1, n₂=2, n₃=3, n₄=3 donne :</p>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,'q5',false)">Σ = 1.75 > 1 (pas de code préfixe)</button>
+        <button class="quiz-opt" onclick="answer(this,'q5',true)">Σ = 1/2+1/4+1/8+1/8 = 1 ≤ 1 (code préfixe possible)</button>
+        <button class="quiz-opt" onclick="answer(this,'q5',false)">Σ = 0.5 < 1 (code non complet)</button>
+        <button class="quiz-opt" onclick="answer(this,'q5',false)">L'inégalité ne s'applique pas ici</button>
+      </div>
+      <div class="quiz-feedback" id="q5-fb">2⁻¹+2⁻²+2⁻³+2⁻³ = 0.5+0.25+0.125+0.125 = 1.0 ≤ 1 ✓</div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="quiz-question" id="q6">
+      <p>6. Dans le codage de Huffman, les deux symboles les moins probables :</p>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,'q6',false)">Ont les codes les plus courts</button>
+        <button class="quiz-opt" onclick="answer(this,'q6',true)">Ont les codes les plus longs et ne diffèrent que d'un bit</button>
+        <button class="quiz-opt" onclick="answer(this,'q6',false)">Sont toujours codés sur 1 bit</button>
+        <button class="quiz-opt" onclick="answer(this,'q6',false)">Doivent être fusionnés en dernier</button>
+      </div>
+      <div class="quiz-feedback" id="q6-fb">Théorème de Huffman : les 2 codes les plus longs sont frères (diffèrent d'1 bit) ✓</div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="quiz-question" id="q7">
+      <p>7. Le codage arithmétique est utilisé dans :</p>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,'q7',false)">MP3 et OGG</button>
+        <button class="quiz-opt" onclick="answer(this,'q7',true)">JPEG, JBIG, JPEG2000</button>
+        <button class="quiz-opt" onclick="answer(this,'q7',false)">AVI et MKV</button>
+        <button class="quiz-opt" onclick="answer(this,'q7',false)">HTTP et FTP</button>
+      </div>
+      <div class="quiz-feedback" id="q7-fb">JPEG (codage entropique), JBIG (images binaires), JPEG2000 ✓</div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="quiz-question" id="q8">
+      <p>8. L'efficacité d'un code source E(φ) est définie par :</p>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,'q8',false)">E = |φ| / H(S)</button>
+        <button class="quiz-opt" onclick="answer(this,'q8',true)">E = H(S) / |φ|</button>
+        <button class="quiz-opt" onclick="answer(this,'q8',false)">E = log₂(k) / H(S)</button>
+        <button class="quiz-opt" onclick="answer(this,'q8',false)">E = 1 - H(S)</button>
+      </div>
+      <div class="quiz-feedback" id="q8-fb">E = H(S)/|φ| ≤ 1 toujours. E=1 seulement si l_moy = H(S) ✓</div>
+    </div>
+
+    <!-- Q9 -->
+    <div class="quiz-question" id="q9">
+      <p>9. RLE est particulièrement efficace pour :</p>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,'q9',false)">Compresser du texte naturel</button>
+        <button class="quiz-opt" onclick="answer(this,'q9',true)">Images noir et blanc avec de longues plages constantes</button>
+        <button class="quiz-opt" onclick="answer(this,'q9',false)">Audio haute fidélité</button>
+        <button class="quiz-opt" onclick="answer(this,'q9',false)">Vidéos HD en couleur</button>
+      </div>
+      <div class="quiz-feedback" id="q9-fb">RLE exploite les répétitions longues. Image N&B → max 255 niveaux vs 255³ RGB ✓</div>
+    </div>
+
+    <!-- Q10 -->
+    <div class="quiz-question" id="q10">
+      <p>10. Dans le codage arithmétique adaptatif, à l'instant initial :</p>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,'q10',false)">On transmet d'abord les probabilités</button>
+        <button class="quiz-opt" onclick="answer(this,'q10',true)">Tous les symboles sont équiprobables (compteur=1 chacun)</button>
+        <button class="quiz-opt" onclick="answer(this,'q10',false)">On utilise les probabilités de Huffman</button>
+        <button class="quiz-opt" onclick="answer(this,'q10',false)">On attend d'avoir codé 100 symboles</button>
+      </div>
+      <div class="quiz-feedback" id="q10-fb">Adaptatif = équiprobable au départ, mise à jour après chaque symbole ✓</div>
+    </div>
+
+    <!-- Q11 -->
+    <div class="quiz-question" id="q11">
+      <p>11. Quelle est la longueur de code optimale pour un symbole de probabilité p selon Shannon ?</p>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,'q11',false)">lᵢ = pᵢ</button>
+        <button class="quiz-opt" onclick="answer(this,'q11',true)">-log₂(pᵢ) ≤ lᵢ &lt; -log₂(pᵢ) + 1</button>
+        <button class="quiz-opt" onclick="answer(this,'q11',false)">lᵢ = 2/pᵢ</button>
+        <button class="quiz-opt" onclick="answer(this,'q11',false)">lᵢ = H(S)</button>
+      </div>
+      <div class="quiz-feedback" id="q11-fb">Codage de Shannon: lᵢ = ⌈-log₂(pᵢ)⌉ (partie entière supérieure) ✓</div>
+    </div>
+
+    <!-- Q12 -->
+    <div class="quiz-question" id="q12">
+      <p>12. Un codeur à variance minimale de Huffman est préférable car :</p>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,'q12',false)">Il produit une meilleure compression</button>
+        <button class="quiz-opt" onclick="answer(this,'q12',true)">Il permet un décodage plus rapide (mots de longueurs proches)</button>
+        <button class="quiz-opt" onclick="answer(this,'q12',false)">Il nécessite moins de mémoire</button>
+        <button class="quiz-opt" onclick="answer(this,'q12',false)">Il produit un code préfixe alors que les autres non</button>
+      </div>
+      <div class="quiz-feedback" id="q12-fb">Longueurs proches → lecture en blocs → décodage plus rapide (applications temps réel) ✓</div>
+    </div>
+
+    <!-- Q13 -->
+    <div class="quiz-question" id="q13">
+      <p>13. La PSNR (Peak Signal-to-Noise Ratio) est calculée par :</p>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,'q13',false)">PSNR = MSE / d²</button>
+        <button class="quiz-opt" onclick="answer(this,'q13',false)">PSNR = log₂(d/MSE)</button>
+        <button class="quiz-opt" onclick="answer(this,'q13',true)">PSNR = 10·log₁₀(d²/MSE) en dB</button>
+        <button class="quiz-opt" onclick="answer(this,'q13',false)">PSNR = d² · MSE</button>
+      </div>
+      <div class="quiz-feedback" id="q13-fb">PSNR = 10·log₁₀(d²/MSE) avec d=255 pour images 8 bits ✓</div>
+    </div>
+
+    <!-- Q14 -->
+    <div class="quiz-question" id="q14">
+      <p>14. I(A,B) = 0 signifie que :</p>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,'q14',false)">La transmission est parfaite</button>
+        <button class="quiz-opt" onclick="answer(this,'q14',true)">A et B sont statistiquement indépendants (bruit total)</button>
+        <button class="quiz-opt" onclick="answer(this,'q14',false)">H(A) = H(B)</button>
+        <button class="quiz-opt" onclick="answer(this,'q14',false)">Le canal n'a aucune erreur</button>
+      </div>
+      <div class="quiz-feedback" id="q14-fb">I(A,B)=0 → H(A|B)=H(A) → connaître B n'aide pas → indépendants ✓</div>
+    </div>
+
+    <!-- Q15 -->
+    <div class="quiz-question" id="q15">
+      <p>15. Pour coder "abccd" avec p(a)=p(b)=0.2, p(c)=0.4, p(d)=0.2 — la 1ère borne inf du codage arithmétique est :</p>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="answer(this,'q15',false)">0.4</button>
+        <button class="quiz-opt" onclick="answer(this,'q15',false)">0.2</button>
+        <button class="quiz-opt" onclick="answer(this,'q15',true)">0.0 (symbole a → intervalle [0, 0.2[)</button>
+        <button class="quiz-opt" onclick="answer(this,'q15',false)">0.6</button>
+      </div>
+      <div class="quiz-feedback" id="q15-fb">a: [0, 0.2[, b: [0.2, 0.4[, c: [0.4, 0.8[, d: [0.8, 1[. 1er symbole=a → L=0 ✓</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div style="text-align:center; padding:2rem 1rem; color:var(--muted); font-size:0.78rem; border-top:1px solid var(--border);">
+  📡 Codage & Compression MM — Dr. Randa BOUKHRIS — ISIMS Sfax<br>
+  <span style="color:var(--accent3); margin-top:0.3rem; display:block;">Bonne chance pour l'examen ! 🎯</span>
+</div>
+
+</div><!-- /.container -->
+
+<script>
+  let score = 0;
+  let answered = 0;
+
+  function answer(btn, qid, isCorrect) {
+    const q = document.getElementById(qid);
+    const opts = q.querySelectorAll('.quiz-opt');
+    const fb = document.getElementById(qid + '-fb');
+
+    // Already answered?
+    if (q.dataset.answered) return;
+    q.dataset.answered = '1';
+    answered++;
+
+    opts.forEach(o => o.disabled = true);
+
+    if (isCorrect) {
+      btn.classList.add('correct');
+      fb.classList.add('show', 'ok');
+      score++;
+    } else {
+      btn.classList.add('wrong');
+      fb.classList.add('show', 'nok');
+      // Show correct
+      opts.forEach(o => {
+        if (o.onclick.toString().includes('true')) o.classList.add('correct');
+      });
+    }
+
+    document.getElementById('score').textContent = score;
+    document.getElementById('total').textContent = answered;
+  }
+
+  function resetQuiz() {
+    score = 0; answered = 0;
+    document.getElementById('score').textContent = '0';
+    document.getElementById('total').textContent = '0';
+    document.querySelectorAll('.quiz-question').forEach(q => {
+      delete q.dataset.answered;
+      q.querySelectorAll('.quiz-opt').forEach(o => {
+        o.disabled = false;
+        o.classList.remove('correct','wrong');
+      });
+      q.querySelectorAll('.quiz-feedback').forEach(f => {
+        f.classList.remove('show','ok','nok');
+      });
+    });
+  }
+
+  // Active nav on scroll
+  const sections = document.querySelectorAll('.section[id]');
+  const navLinks = document.querySelectorAll('nav a');
+  window.addEventListener('scroll', () => {
+    let cur = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 100) cur = s.id;
+    });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + cur);
+    });
+  });
+</script>
+</body>
+</html>
