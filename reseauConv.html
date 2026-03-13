@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Réseaux · Exam</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+
+:root {
+  --bg: #0f0f0f;
+  --card: #191919;
+  --border: #2a2a2a;
+  --text: #e8e8e8;
+  --muted: #666;
+  --accent: #e8c547;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  user-select: none;
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 32px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.topic-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.topic-pill {
+  padding: 5px 14px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  background: transparent;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.15s;
+}
+.topic-pill:hover { color: var(--text); border-color: #444; }
+.topic-pill.active { background: var(--accent); color: #0f0f0f; border-color: var(--accent); }
+.progress-wrap { display: flex; align-items: center; gap: 12px; }
+.progress-text { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); white-space: nowrap; }
+.progress-bar { width: 100px; height: 3px; background: var(--border); border-radius: 2px; }
+.progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.3s ease; }
+
+/* ── CARD AREA ── */
+.card-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 680px;
+  padding: 56px 64px;
+  position: absolute;
+  transition: transform 0.35s cubic-bezier(.4,0,.2,1), opacity 0.35s;
+}
+.card.hidden-right { transform: translateX(110%); opacity: 0; pointer-events: none; }
+.card.hidden-left  { transform: translateX(-110%); opacity: 0; pointer-events: none; }
+.card.visible      { transform: translateX(0); opacity: 1; }
+
+.card-topic {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 28px;
+}
+.card-q {
+  font-family: 'Instrument Serif', serif;
+  font-size: 32px;
+  line-height: 1.25;
+  color: var(--text);
+  margin-bottom: 36px;
+}
+.card-q em { font-style: italic; color: var(--accent); }
+
+/* ANSWER area */
+.card-answer {
+  border-top: 1px solid var(--border);
+  padding-top: 28px;
+  display: none;
+}
+.card-answer.show { display: block; }
+.card-answer-text {
+  font-size: 17px;
+  line-height: 1.75;
+  color: #ccc;
+}
+.card-answer-text strong { color: var(--accent); font-weight: 600; }
+.card-answer-text .line {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 8px 0;
+  border-bottom: 1px solid #222;
+  font-size: 15px;
+}
+.card-answer-text .line:last-child { border-bottom: none; }
+.card-answer-text .line .k {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  width: 90px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.show-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 11px 24px;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.15s;
+}
+.show-btn:hover { border-color: #444; color: var(--text); }
+
+/* ── BOTTOM BAR ── */
+.bottombar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 20px 32px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.nav-btn {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font-size: 20px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.nav-btn:hover { background: var(--card); border-color: #444; }
+.nav-btn:disabled { opacity: 0.2; cursor: not-allowed; }
+.hint { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topic-pills" id="pills"></div>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+    <div class="progress-text" id="prog-text">1 / 1</div>
+  </div>
+</div>
+
+<div class="card-area" id="card-area">
+  <!-- cards injected here -->
+</div>
+
+<div class="bottombar">
+  <button class="nav-btn" id="btn-prev" onclick="go(-1)">←</button>
+  <span class="hint">← → ou clic pour naviguer</span>
+  <button class="nav-btn" id="btn-next" onclick="go(1)">→</button>
+</div>
+
+<script>
+const TOPICS = [
+  { id: 'all',      label: 'Tout' },
+  { id: 'tcp',      label: 'TCP' },
+  { id: 'udp',      label: 'UDP' },
+  { id: 'lan',      label: 'LAN' },
+  { id: 'routage',  label: 'Routage' },
+  { id: 'statique', label: 'Statique' },
+  { id: 'dynamique',label: 'Dynamique' },
+];
+
+// Each card: { topic, q, a }
+// a can be a string (HTML) or an array of {k, v} rows
+const ALL_CARDS = [
+
+  // ── TCP ──
+  { topic: 'tcp', q: 'TCP c\'est quoi en <em>une phrase</em> ?',
+    a: `<strong>Fiable, orienté connexion.</strong> Il garantit que tous les paquets arrivent, dans le bon ordre, sans perte. En échange : il est plus lent qu'UDP.` },
+
+  { topic: 'tcp', q: 'TCP établit une connexion en <em>combien d\'étapes</em> ?',
+    a: `<strong>3 étapes</strong> — c'est le 3-way handshake.<div class="line"><span class="k">Étape 1</span> Client envoie <strong>SYN</strong></div><div class="line"><span class="k">Étape 2</span> Serveur répond <strong>SYN + ACK</strong></div><div class="line"><span class="k">Étape 3</span> Client envoie <strong>ACK</strong> → connexion établie</div>` },
+
+  { topic: 'tcp', q: 'TCP ferme une connexion en <em>combien d\'étapes</em> ?',
+    a: `<strong>4 étapes</strong> — ne pas confondre avec l'établissement (3).<div class="line"><span class="k">Étape 1</span> Client → <strong>FIN</strong></div><div class="line"><span class="k">Étape 2</span> Serveur → <strong>ACK</strong></div><div class="line"><span class="k">Étape 3</span> Serveur → <strong>FIN</strong></div><div class="line"><span class="k">Étape 4</span> Client → <strong>ACK</strong> → terminé</div>` },
+
+  { topic: 'tcp', q: 'Quel champ TCP gère le <em>contrôle de flux</em> ?',
+    a: `La <strong>Fenêtre (Window)</strong> — 16 bits. Elle indique combien de segments peuvent être acceptés simultanément. Ne pas confondre avec le N° d'ordre qui gère le <em>réassemblage</em>.` },
+
+  { topic: 'tcp', q: 'Quelle est la taille <em>minimale</em> de l\'en-tête TCP ?',
+    a: `<strong>20 octets minimum.</strong><div class="line"><span class="k">Port src</span>16 bits</div><div class="line"><span class="k">Port dst</span>16 bits</div><div class="line"><span class="k">N° ordre</span>32 bits → réassemblage</div><div class="line"><span class="k">N° ACK</span>32 bits → confirmation</div><div class="line"><span class="k">Fenêtre</span>16 bits → contrôle de flux</div><div class="line"><span class="k">Checksum</span>16 bits → détection d'erreurs</div>` },
+
+  { topic: 'tcp', q: 'Les 6 flags TCP — lesquels sont les plus importants ?',
+    a: `<div class="line"><span class="k">SYN</span>Ouverture de connexion</div><div class="line"><span class="k">ACK</span>Accusé de réception</div><div class="line"><span class="k">FIN</span>Fermeture de connexion</div><div class="line"><span class="k">RST</span>Reset — réinitialise la connexion</div><div class="line"><span class="k">PSH</span>Envoyer immédiatement à la couche supérieure</div><div class="line"><span class="k">URG</span>Données urgentes à traiter en priorité</div>` },
+
+  { topic: 'tcp', q: 'Quelles applications utilisent <em>TCP</em> ?',
+    a: `TCP quand la fiabilité prime :<div class="line"><span class="k">HTTP</span>port 80</div><div class="line"><span class="k">HTTPS</span>port 443</div><div class="line"><span class="k">FTP</span>port 21</div><div class="line"><span class="k">SMTP</span>port 25</div><div class="line"><span class="k">SSH</span>port 22</div><div class="line"><span class="k">Telnet</span>port 23</div>` },
+
+  // ── UDP ──
+  { topic: 'udp', q: 'UDP c\'est quoi en <em>une phrase</em> ?',
+    a: `<strong>Rapide, sans garanties.</strong> Il envoie et oublie — pas d'ACK, pas de reconnexion, pas d'ordre garanti. En échange : en-tête minuscule et zéro délai.` },
+
+  { topic: 'udp', q: 'Taille de l\'en-tête UDP ?',
+    a: `<strong>8 octets seulement</strong> (contre ≥20 pour TCP).<div class="line"><span class="k">Port src</span>16 bits</div><div class="line"><span class="k">Port dst</span>16 bits</div><div class="line"><span class="k">Longueur</span>16 bits (max 64 Ko)</div><div class="line"><span class="k">Checksum</span>16 bits — seule garantie de validité</div>` },
+
+  { topic: 'udp', q: 'Quelles applications utilisent <em>UDP</em> ?',
+    a: `UDP quand la vitesse prime :<div class="line"><span class="k">DNS</span>port 53</div><div class="line"><span class="k">DHCP</span>port 67/68</div><div class="line"><span class="k">TFTP</span>port 69</div><div class="line"><span class="k">SNMP</span>port 161</div><div class="line"><span class="k">RIP</span>port 520</div><div class="line"><span class="k">VoIP / Video</span>streaming, jeux en ligne</div>` },
+
+  { topic: 'udp', q: 'Qu\'est-ce que TCP et UDP ont <em>en commun</em> ?',
+    a: `Deux choses seulement :<br><br><strong>1. Les numéros de port</strong> (source + destination)<br><strong>2. Le Checksum</strong> (somme de contrôle)<br><br>Tout le reste diffère.` },
+
+  { topic: 'udp', q: 'TCP vs UDP — <em>résumé rapide</em>',
+    a: `<div class="line"><span class="k">Connexion</span>TCP oui · UDP non</div><div class="line"><span class="k">Fiabilité</span>TCP garantie · UDP best-effort</div><div class="line"><span class="k">Ordre</span>TCP oui · UDP non</div><div class="line"><span class="k">ACK</span>TCP oui · UDP non</div><div class="line"><span class="k">En-tête</span>TCP ≥20 oct · UDP 8 oct</div><div class="line"><span class="k">PDU</span>TCP = segment · UDP = datagramme</div>` },
+
+  // ── LAN ──
+  { topic: 'lan', q: 'Les 3 types d\'adresses MAC ?',
+    a: `<div class="line"><span class="k">Unicast</span>Un seul destinataire · adresse unique par carte</div><div class="line"><span class="k">Broadcast</span><strong>FF-FF-FF-FF-FF-FF</strong> · tous les hôtes du LAN</div><div class="line"><span class="k">Multicast</span>Commence par <strong>01-00-5E</strong> · groupe d'hôtes · IPv4 : 224.x.x.x à 239.x.x.x</div>` },
+
+  { topic: 'lan', q: 'Comment fonctionne <em>un Switch</em> ?',
+    a: `C'est un équipement de <strong>couche 2</strong>.<br><br>Il maintient une <strong>table MAC</strong> : à chaque trame reçue, il enregistre la <strong>MAC source + port entrant</strong>.<br><br>Ensuite :<div class="line"><span class="k">MAC connue</span>envoie uniquement sur le bon port</div><div class="line"><span class="k">MAC inconnue</span>flood — tous les ports sauf entrée</div><div class="line"><span class="k">Broadcast</span>flood — tous les ports sauf entrée</div>` },
+
+  { topic: 'lan', q: 'La table MAC se remplit avec quoi ?',
+    a: `Avec les trames <em>entrantes</em> :<br><br><strong>MAC source + numéro de port entrant</strong><br><br>Le switch apprend où <em>habitent</em> les appareils en écoutant leur trafic.` },
+
+  { topic: 'lan', q: 'Les 3 méthodes de commutation ?',
+    a: `<div class="line"><span class="k">Store-Fwd</span>Reçoit tout → vérifie CRC → transmet. <strong>Latence MAX</strong>, zéro erreur</div><div class="line"><span class="k">Fast-Fwd</span>Transmet dès la lecture de la MAC dest. <strong>Latence MIN</strong>, peut laisser passer des erreurs</div><div class="line"><span class="k">Fragment-Free</span>Attend 64 octets → compromis. Variante de Cut-Through</div>` },
+
+  { topic: 'lan', q: 'Domaine de <em>collision</em> vs domaine de <em>diffusion</em> ?',
+    a: `<div class="line"><span class="k">Collision</span>Zone où 2 émissions simultanées causent une collision</div><div class="line"><span class="k">Hub</span>Étend le domaine de collision (couche 1)</div><div class="line"><span class="k">Switch</span>1 domaine de collision par port · étend la diffusion</div><div class="line"><span class="k">Diffusion</span>Zone recevant les broadcasts FF-FF-FF-FF-FF-FF</div><div class="line"><span class="k">Routeur</span>Segmente le domaine de diffusion</div>` },
+
+  { topic: 'lan', q: '3 hubs → combien de domaines de collision ?<br>5 switchs → combien de domaines de diffusion ?',
+    a: `<strong>3 hubs = 1 domaine de collision</strong> (les hubs étendent le domaine)<br><br><strong>5 switchs = 1 domaine de diffusion</strong> (les switchs étendent le domaine de diffusion)<br><br>Il faut un <strong>routeur</strong> pour segmenter la diffusion.` },
+
+  // ── ROUTAGE ──
+  { topic: 'routage', q: 'Un routeur — quelles sont ses 3 étapes ?',
+    a: `<div class="line"><span class="k">Étape 1</span><strong>Désencapsule</strong> la trame couche 2</div><div class="line"><span class="k">Étape 2</span>Consulte la <strong>table de routage</strong> avec l'IP destination</div><div class="line"><span class="k">Étape 3</span><strong>Réencapsule</strong> dans une nouvelle trame couche 2 → transmet</div><br>Règle fondamentale : <strong>l'IP destination ne change jamais</strong>. Seule la MAC destination change à chaque saut.` },
+
+  { topic: 'routage', q: 'Qu\'est-ce qui <em>change</em> et ce qui <em>reste constant</em> à chaque saut ?',
+    a: `<div class="line"><span class="k">Constante</span><strong>Adresse IP destination</strong> — de bout en bout</div><div class="line"><span class="k">Change</span><strong>Adresse MAC destination</strong> — recalculée à chaque saut</div><br>C'est la confusion classique à l'exam.` },
+
+  { topic: 'routage', q: 'Les codes de la table de routage ?',
+    a: `<div class="line"><span class="k">C</span>Connected — directement connecté (DA = 0)</div><div class="line"><span class="k">L</span>Local — interface du routeur lui-même</div><div class="line"><span class="k">S</span>Static — route statique (DA = 1)</div><div class="line"><span class="k">S*</span>Route statique par <strong>défaut</strong></div><div class="line"><span class="k">D</span>EIGRP (DA = 90)</div><div class="line"><span class="k">O</span>OSPF (DA = 110)</div><div class="line"><span class="k">R</span>RIP (DA = 120)</div>` },
+
+  { topic: 'routage', q: 'La Distance Administrative — règle ?',
+    a: `<strong>Plus la valeur est faible = plus la route est prioritaire.</strong><div class="line"><span class="k">0</span>Directement connectée ← priorité max</div><div class="line"><span class="k">1</span>Statique</div><div class="line"><span class="k">90</span>EIGRP</div><div class="line"><span class="k">100</span>IGRP</div><div class="line"><span class="k">110</span>OSPF</div><div class="line"><span class="k">115</span>IS-IS</div><div class="line"><span class="k">120</span>RIP ← priorité min</div>` },
+
+  { topic: 'routage', q: 'Correspondance la plus longue — c\'est quoi ?',
+    a: `Le routeur choisit la route avec le <strong>préfixe le plus long</strong> (le plus spécifique).<br><br>Ex : destination 172.16.0.2<br>→ /24 est préféré à /16<br>→ /24 > /16 donc <strong>/24 gagne</strong>` },
+
+  // ── STATIQUE ──
+  { topic: 'statique', q: 'Routage statique — avantages et inconvénients ?',
+    a: `<div class="line"><span class="k">Avantages</span>Peu de CPU · sécurisé (non annoncé) · simple à comprendre</div><div class="line"><span class="k">Inconvénients</span>Manuel · risque d'erreur · n'évolue pas seul</div><br>À utiliser pour les petits réseaux, les routeurs d'extrémité, ou comme route de secours.` },
+
+  { topic: 'statique', q: 'Les 4 types de routes statiques ?',
+    a: `<div class="line"><span class="k">Standard</span>Vers un réseau spécifique — DA = 1</div><div class="line"><span class="k">Par défaut</span><code style="background:#222;padding:2px 6px;border-radius:4px;font-size:12px">0.0.0.0 0.0.0.0</code> → tous les paquets sans route · S*</div><div class="line"><span class="k">Récapitulative</span>Plusieurs routes résumées en une — réduit la table</div><div class="line"><span class="k">Flottante</span>Route de secours · DA plus élevée que la principale</div>` },
+
+  { topic: 'statique', q: 'Route <em>flottante</em> — comment ça marche ?',
+    a: `Une route flottante a une <strong>DA supérieure</strong> à la route principale.<br><br>→ Elle est invisible dans la table tant que la principale fonctionne.<br>→ Elle "apparaît" uniquement si la principale tombe.<br><br>Ex : <code style="background:#222;padding:2px 6px;border-radius:4px;font-size:12px">ip route 0.0.0.0 0.0.0.0 s0/0/1 121</code><br>121 > 120 (DA de RIP) → flottante par rapport à RIP.` },
+
+  { topic: 'statique', q: 'Que signifie <em>[1/0]</em> dans une entrée de table ?',
+    a: `<code style="background:#222;padding:4px 10px;border-radius:6px;font-size:14px">S 10.2.0.0 [1/0] via 172.16.2.2</code><br><br><div class="line"><span class="k">1</span><strong>Distance Administrative</strong> (1 = statique)</div><div class="line"><span class="k">0</span><strong>Métrique</strong></div><div class="line"><span class="k">via …</span>Adresse du tronçon suivant (next-hop)</div>` },
+
+  { topic: 'statique', q: 'Syntaxe d\'une route statique standard ?',
+    a: `<code style="background:#222;padding:8px 14px;border-radius:6px;font-size:13px;display:block;line-height:1.8">ip route [réseau] [masque] [next-hop ou interface]</code><br><div class="line"><span class="k">Ex 1</span>ip route 192.168.2.0 255.255.255.0 10.1.1.2</div><div class="line"><span class="k">Ex 2</span>ip route 192.168.2.0 255.255.255.0 s0/0/0</div><div class="line"><span class="k">Défaut</span>ip route 0.0.0.0 0.0.0.0 serial0/0/1</div>` },
+
+  // ── DYNAMIQUE ──
+  { topic: 'dynamique', q: 'Routage dynamique — principe ?',
+    a: `Les protocoles de routage configurent <strong>automatiquement</strong> la table et s'adaptent aux changements de topologie.<br><br>Ils font : découverte des réseaux · mise à jour automatique · choix du meilleur chemin · adaptation aux pannes.` },
+
+  { topic: 'dynamique', q: 'C\'est quoi la <em>convergence</em> ?',
+    a: `La convergence est atteinte quand toutes les tables de routage du réseau sont <strong>cohérentes et complètes</strong>.<br><br>Le réseau n'est pas opérationnel avant ça.<div class="line"><span class="k">Lente</span>RIP, IGRP</div><div class="line"><span class="k">Rapide</span>EIGRP, OSPF</div><div class="line"><span class="k">Facteur</span>Taille du réseau</div>` },
+
+  { topic: 'dynamique', q: 'Vecteur de distance vs État de liens ?',
+    a: `<div class="line"><span class="k">Vect. dist.</span>Ne connaît pas le chemin complet · utilise ses voisins comme repères · RIP, IGRP, EIGRP</div><div class="line"><span class="k">État liens</span>Vue complète de la topologie · chaque routeur calcule ses propres chemins · OSPF, IS-IS</div><br>État de liens = plus de mémoire/CPU mais convergence plus rapide.` },
+
+  { topic: 'dynamique', q: 'IGP vs EGP — différence ?',
+    a: `<div class="line"><span class="k">IGP</span><strong>Au sein d'un seul système autonome</strong> · RIP, EIGRP, OSPF, IS-IS</div><div class="line"><span class="k">EGP</span><strong>Entre systèmes autonomes différents</strong> · BGP pour Internet</div>` },
+
+  { topic: 'dynamique', q: 'Par classe vs Sans classe ?',
+    a: `<div class="line"><span class="k">Par classe</span>N'envoie pas le masque · pas de VLSM/CIDR · RIPv1, IGRP</div><div class="line"><span class="k">Sans classe</span>Envoie le masque · supporte VLSM/CIDR · RIPv2, EIGRP, OSPF, IS-IS, BGP</div><br><strong>Piège exam :</strong> RIPv2 est sans classe, RIPv1 est par classe.` },
+
+  { topic: 'dynamique', q: 'Tableau des protocoles — DA et métriques ?',
+    a: `<div class="line"><span class="k">RIPv1</span>DA 120 · sauts (max 15) · par classe · update 30s</div><div class="line"><span class="k">RIPv2</span>DA 120 · sauts (max 15) · sans classe · 224.0.0.9</div><div class="line"><span class="k">IGRP</span>DA 100 · BP+délai+charge+fiabilité · par classe</div><div class="line"><span class="k">EIGRP</span>DA 90 · BP+délai+… · sans classe · algo DUAL · 224.0.0.10</div><div class="line"><span class="k">OSPF</span>DA 110 · Coût (BP ref/BP iface) · état de liens · algo SPF</div>` },
+
+  { topic: 'dynamique', q: 'OSPF — comment calcule-t-il son coût ?',
+    a: `<strong>Coût = Bande passante de référence / Bande passante de l'interface</strong><br><br>Ex : 10⁸ / 10⁶ (1 Mbps) = <strong>100</strong><br><br>OSPF choisit le chemin avec le coût <em>total le plus faible</em>. Algorithme SPF (Dijkstra).` },
+];
+
+// State
+let activeTopic = 'all';
+let currentIdx = 0;
+let cards = [];
+let prevIdx = -1;
+
+function getCards() {
+  return activeTopic === 'all' ? ALL_CARDS : ALL_CARDS.filter(c => c.topic === activeTopic);
+}
+
+function renderPills() {
+  const el = document.getElementById('pills');
+  el.innerHTML = '';
+  TOPICS.forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'topic-pill' + (t.id === activeTopic ? ' active' : '');
+    btn.textContent = t.label;
+    btn.onclick = () => { activeTopic = t.id; currentIdx = 0; prevIdx = -1; cards = getCards(); renderAll(); };
+    el.appendChild(btn);
+  });
+}
+
+function renderProgress() {
+  const pct = cards.length > 1 ? (currentIdx / (cards.length - 1)) * 100 : 100;
+  document.getElementById('prog').style.width = pct + '%';
+  document.getElementById('prog-text').textContent = `${currentIdx + 1} / ${cards.length}`;
+  document.getElementById('btn-prev').disabled = currentIdx === 0;
+  document.getElementById('btn-next').disabled = currentIdx === cards.length - 1;
+}
+
+function renderCard(idx, direction) {
+  const area = document.getElementById('card-area');
+  // remove old card
+  const old = area.querySelector('.card');
+  if (old) {
+    old.classList.remove('visible');
+    old.classList.add(direction > 0 ? 'hidden-left' : 'hidden-right');
+    setTimeout(() => old.remove(), 380);
+  }
+
+  const c = cards[idx];
+  const div = document.createElement('div');
+  div.className = 'card hidden-right';
+  if (direction < 0) div.classList.replace('hidden-right', 'hidden-left');
+
+  div.innerHTML = `
+    <div class="card-topic">${c.topic.toUpperCase()}</div>
+    <div class="card-q">${c.q}</div>
+    <button class="show-btn" onclick="revealAnswer(this)">Voir la réponse</button>
+    <div class="card-answer">
+      <div class="card-answer-text">${c.a}</div>
+    </div>
+  `;
+  area.appendChild(div);
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => div.classList.replace(direction < 0 ? 'hidden-left' : 'hidden-right', 'visible'));
+  });
+}
+
+function revealAnswer(btn) {
+  btn.style.display = 'none';
+  btn.nextElementSibling.classList.add('show');
+}
+
+function go(dir) {
+  const newIdx = currentIdx + dir;
+  if (newIdx < 0 || newIdx >= cards.length) return;
+  prevIdx = currentIdx;
+  currentIdx = newIdx;
+  renderCard(currentIdx, dir);
+  renderProgress();
+}
+
+function renderAll() {
+  renderPills();
+  renderProgress();
+  const area = document.getElementById('card-area');
+  area.innerHTML = '';
+  const div = document.createElement('div');
+  div.className = 'card visible';
+  const c = cards[currentIdx];
+  div.innerHTML = `
+    <div class="card-topic">${c.topic.toUpperCase()}</div>
+    <div class="card-q">${c.q}</div>
+    <button class="show-btn" onclick="revealAnswer(this)">Voir la réponse</button>
+    <div class="card-answer">
+      <div class="card-answer-text">${c.a}</div>
+    </div>
+  `;
+  area.appendChild(div);
+}
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); go(1); }
+  if (e.key === 'ArrowLeft') go(-1);
+});
+
+// Init
+cards = getCards();
+renderAll();
+</script>
+</body>
+</html>
